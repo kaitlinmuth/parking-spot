@@ -15,7 +15,9 @@ app.get('/', function(req, res, next){
 
 app.post('/', function(req, res, next){
     var spot = new Spot();
-    spot.created = new Date();
+    spot.properties.created = new Date();
+    spot.geometry.type = "Point";
+    spot.geometry.coordinates = req.data;
 });
 
 module.exports = app;
