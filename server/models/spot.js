@@ -4,20 +4,11 @@
 var mongoose = require('mongoose');
 
 var Spot = new mongoose.Schema({
-    properties: {
-        location: {
-            longitude: mongoose.Schema.Types.ObjectId,
-            latitude: mongoose.Schema.Types.ObjectId,
-            altitude: mongoose.Schema.Types.ObjectId
-        },
-        created: Date,
-        Notes: String,
-        Timer: Date
-    },
-    geometry : {
-        type: String,
-        coordinates: [Number]
-    }
+    longitude: Number,
+    latitude: Number,
+    created: Date,
+    Notes: String,
+    Timer: Date
 });
 
 module.exports = mongoose.model('spot', Spot);

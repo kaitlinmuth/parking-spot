@@ -26,6 +26,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/spot', spot);
 
 var server = app.listen(3000, function(){
   var port = server.address().port;

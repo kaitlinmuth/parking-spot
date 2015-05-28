@@ -14,8 +14,13 @@
     <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
-    <div ng-controller="IndexController" id="map">
-
+    <div class="bodyContainer">
+        <div ng-controller="IndexController as index">
+            <div id="map" ng-style="mapStyle">
+                </div>
+            <div class="btn parkBtn" ng-click="getPosition()">Park</div>
+            <div class="btn routeBtn">Route</div>
+        </div>
     </div>
 
 </body>

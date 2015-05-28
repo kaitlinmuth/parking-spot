@@ -1,4 +1,30 @@
+body {
+    font-family: sans-serif;
+    font-size: 14px;
+}
+
+.bodyContainer {
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
+    text-align: center;
+}
+
 #map {
     height: 400px;
     width: 600px;
+}
+
+.btn {
+    width: 30px;
+    display: inline;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    font-size: 36px;
+}
+
+.parkBtn {
+    color: forestgreen;
+    border: 2px solid forestgreen;
 }
