@@ -6,17 +6,33 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 
+var passport = require('passport');
+var session = require('express-session');
+var localStrategy = require('passport-local');
+
 var index = require('./routes/index');
 var spot = require('./routes/spot');
+var User = require('./models/user');
+var login = require('./routes/login');
+var register = require('.routes/register');
 
 var app = express();
 
-mongoose.connect('mongodb://localhost/parking_spots');
+//connect to the database
+var mongoURI = 'mongodb://localhost/parking_spots';
+var MongoDB = mongoose.connect(mongoURI).connection;
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+MongoDB.on('error', function(err){
+  console.log('mongodb connection error', err);
+});
 
+MongoDB.once('open', function(){
+  console.log('mongodb connection open');
+});
+
+//// view engine setup
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'ejs');
 
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -25,8 +41,57 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(session({
+  secret: 'secret',
+  key: 'user',
+  resave: true,
+  saveUninitialized: false,
+  cookie: {maxAge: 60000, secure: false}
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use('local', new localStrategy(
+    {passReqToCallback : true, usernameField: 'username'},
+    function(req, username, password, done){
+
+}));
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err,user){
+    if(err) done(err);
+    done(null,user);
+  });
+});
+
+passport.use('local', new localStrategy({
+      passReqToCallback : true,
+      usernameField: 'username'
+    },
+    function(req, username, password, done){
+      User.findOne({ username: username }, function(err, user) {
+        if (err) throw err;
+        if (!user)
+          return done(null, false, {message: 'Incorrect username and password.'});
+
+        // test a matching password
+        user.comparePassword(password, function(err, isMatch) {
+          if (err) throw err;
+          if(isMatch)
+            return done(null, user);
+          else
+            done(null, false, { message: 'Incorrect username and password.' });
+        });
+      });
+    }));
+
+
 app.use('/', index);
 app.use('/spot', spot);
+app.use('/register', register);
+app.use('/login', login);
 
 var server = app.listen(3000, function(){
   var port = server.address().port;

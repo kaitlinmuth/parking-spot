@@ -4,7 +4,6 @@
 var app = angular.module('app', []);
 // Controllers
 app.controller("IndexController", ['$scope', '$http', 'geolocation', function($scope, $http, geolocation){
-
     // ===== Database Logic =====
     // initialize variable spot
      $scope.spot = {};
@@ -75,7 +74,6 @@ app.controller("IndexController", ['$scope', '$http', 'geolocation', function($s
     var mapLayer = L.mapbox.tileLayer('mapbox.pencil');
     var map = L.map('map')
         .addLayer(mapLayer);
-        //TODO set map position dynamically
 
     // initialize map spot
     getPosition();
