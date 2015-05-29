@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Parking Spot Tracker</title>
 
-    <!--<script type="text/javascript" src="/vendor/mapbox.js/src/mapbox.js"></script>-->
     <script type="text/javascript" src="/vendor/angular/angular.min.js"></script>
     <!--<script type="text/javascript" src="/vendor/mapbox-directions/mapbox.directions.js"></script>-->
     <script type="text/javascript" src="/assets/scripts/app.min.js"></script>
@@ -18,7 +17,7 @@
         <div ng-controller="IndexController as index">
             <div id="map" ng-style="mapStyle">
                 </div>
-            <div class="btn parkBtn" ng-click="getPosition()">Park</div>
+            <div class="btn parkBtn" ng-click="park()">Park</div>
             <div class="btn routeBtn">Route</div>
         </div>
     </div>

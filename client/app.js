@@ -3,32 +3,42 @@
  */
 var app = angular.module('app', []);
 
-// Controllers
-app.controller("IndexController", ['$scope', '$http', function($scope, $http){
-
-    // ===== Mapbox Set Up =====
-    //TODO move map functionality into separate module
-    //Initialize map
-    L.mapbox.accessToken='pk.eyJ1Ijoia2FpdGxpbm11dGgiLCJhIjoiNzZmNzg3OTE5N2ExMTgxNTcxYzdiM2RlMGQxN2Q2YzcifQ.YENWVyAaFMg0ngZEc1aP7A';
-    var mapLayer = L.mapbox.tileLayer('mapbox.pencil');
-    var map = L.map('map')
-        .addLayer(mapLayer)
-        //TODO set map position dynamically
-        .setView([44.832419, -93.300534], 15);
-
-    //function addPin drops pin in map for parked location
-    var addPin = function(lat, lon) {
-        console.log("Dropping pin at ",lat," ",lon);
-        L.marker([lat, lon])
-        .addTo(map);
+//geolocation factory
+app.factory('geolocation', ['$q','$rootScope','$window', function geolocationFactory($q,$rootScope,$window) {
+    return {
+        getLocation: function () {
+            var deferred = $q.defer();
+            if ($window.navigator.geolocation) {
+                $window.navigator.geolocation.getCurrentPosition(function (position) {
+                    $rootScope.$apply(function () {
+                        deferred.resolve(position);
+                    });
+                }, function (error) {
+                    switch (error){
+                        case 1:
+                            deferred.reject('Permission denied');
+                            break;
+                        case 2:
+                            deferred.reject('Position unavailable');
+                            break;
+                        case 3:
+                            deferred.reject('Request timeout');
+                            break;
+                    }
+                }, {enableHighAccuracy: true, timeout: 10000, maximumAge: 0});
+            }
+            else deferred.reject('Unsupported browser.');
+            return deferred.promise;
+        }
     };
+}]);
 
-    // set map width to update dynamically with page size
-    $scope.mapStyle = {"width": "100%"};
+// Controllers
+app.controller("IndexController", ['$scope', '$http', 'geolocation', function($scope, $http, geolocation){
 
     // ===== Database Logic =====
     // initialize variable spot
-    $scope.spot = {};
+     $scope.spot = {};
 
     //TODO fix $http.get functionality
     var fetchSpot = function(){
@@ -41,50 +51,73 @@ app.controller("IndexController", ['$scope', '$http', function($scope, $http){
         });
     };
 
-    //TODO fix $http.post functionality
-    var saveSpot = function(){
+    $scope.saveSpot = function(){
         return $http.post('/spot', $scope.spot);
     };
 
     // ===== Positioning Logic =====
-    // setPosition takes in a position parameter and:
-    // - saves a given position to $scope.spot
-    // - calls the function addPin to drop a pin to the map
-    // - calls the function saveSpot to save the spot to the database
+
+    //park gets a position, sets Spot to position, drops a pin and saves the spot to the database
+    $scope.park = function(){
+        getPosition()
+            .then(
+            function(){map.addPin()},
+            function(err){logError(err);},
+            function(msg){sendUpdate(msg);})
+            .then(
+            function(){$scope.saveSpot();},
+            function(err){logError(err);},
+            function(msg){sendUpdate(msg);});
+    };
+
+    // setPosition saves a given position to $scope.spot
     //TODO add user data to the spot
-    $scope.setPosition = function(position){
+    var setPosition = function(position){
         console.log("set position", position);
         $scope.spot.created = new Date();
         $scope.spot.latitude = position.coords.latitude;
         $scope.spot.longitude = position.coords.longitude;
-        console.log("spot set to",$scope.spot);
-        addPin($scope.spot.latitude, $scope.spot.longitude);
-        return saveSpot();
+        console.log("spot set to", $scope.spot);
+        map.setView([$scope.spot.latitude, $scope.spot.longitude], 15);
+        return true;
     };
 
-    // getPosition retrieves the user's current position using the browser's geolocation
-    $scope.getPosition = function() {
-        console.log("Clicked!");
-        if (navigator.geolocation) {
-            console.log("Locating...");
-            var location = navigator.geolocation.getCurrentPosition(
-                $scope.setPosition,
-                logErr,
-                {enableHighAccuracy:true, timeout: 10000000, maximumAge:0});
-        } else alert("Geolocation is not supported by this browser.");
+    var getPosition = function(){
+        var promise = geolocation.getLocation();
+            promise.then(
+                function(value){setPosition(value);},
+                function(err){logError(err)},
+                function(update){sendUpdate(update);});
+        return promise;
     };
 
-    //logErr is an error logging function to support getPosition
-    var logErr = function(error){
-        var errors = {
-            1: 'Permission denied',
-            2: 'Position unavailable',
-            3: 'Request timeout'
-        };
-        alert("Error: " + errors[error.code]);
+    var logError = function(error){
+        console.log('Failed: ',error);
+        next(error);
     };
 
-    //fetchSpot();
+    var sendUpdate = function(message){
+        console.log('Update: ', message);
+    };
 
+    // ===== Mapbox Set Up =====
+    // TODO move map functionality into separate module
+    // Initialize map
+    L.mapbox.accessToken='pk.eyJ1Ijoia2FpdGxpbm11dGgiLCJhIjoiNzZmNzg3OTE5N2ExMTgxNTcxYzdiM2RlMGQxN2Q2YzcifQ.YENWVyAaFMg0ngZEc1aP7A';
+    var mapLayer = L.mapbox.tileLayer('mapbox.pencil');
+    var map = L.map('map')
+        .addLayer(mapLayer);
+        //TODO set map position dynamically
+
+    // initialize map spot
+    getPosition();
+
+    //function addPin drops pin in map for parked location
+    map.addPin = function() {
+        L.marker([$scope.spot.latitude, $scope.spot.longitude])
+            .addTo(map);
+    };
+    // set map width to update dynamically with page size
+    $scope.mapStyle = {"width": "100%"};
 
 }]);

@@ -6,7 +6,7 @@ module.exports = function(grunt) {
             options: {
                 banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
             },
-            build: {
+            app: {
                 src: 'client/app.js',
                 dest: 'server/public/assets/scripts/app.min.js'
             }
@@ -29,16 +29,6 @@ module.exports = function(grunt) {
                     "style.css"
                 ],
                 dest: "server/public/assets/css/"
-            },
-            maps: {
-                expand: true,
-                cwd: "node_modules/",
-                src: [
-                    "leaflet/dist/leaflet.css",
-                    "leaflet/dist/leaflet.js"
-                    //,"mapbox.js/src/*"
-                ],
-                dest: "server/public/vendor/"
             }
         }
     });
