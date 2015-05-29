@@ -33,6 +33,15 @@ module.exports = function(grunt) {
                     "style.css"
                 ],
                 dest: "server/public/assets/css/"
+            },
+            views: {
+                expand: true,
+                cwd: "client/views/",
+                src: [
+                    "login.html",
+                    "register.html"
+                    ],
+                dest:"server/public/views/"
             }
         }
     });

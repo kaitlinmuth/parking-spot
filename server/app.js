@@ -14,7 +14,7 @@ var index = require('./routes/index');
 var spot = require('./routes/spot');
 var User = require('./models/user');
 var login = require('./routes/login');
-var register = require('.routes/register');
+var register = require('./routes/register');
 
 var app = express();
 

@@ -4,7 +4,7 @@ var passport = require('passport');
 var path = require('path');
 
 router.get("/", function(req,res,next){
-    res.sendFile(path.resolve(__dirname, '../views/index.html'));
+    res.sendFile(path.resolve(__dirname, '../public/views/login.html'));
 });
 
 router.post('/',
