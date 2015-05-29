@@ -2,37 +2,6 @@
  * Created by kaitlinmuth on 5/26/15.
  */
 var app = angular.module('app', []);
-
-//geolocation factory
-app.factory('geolocation', ['$q','$rootScope','$window', function geolocationFactory($q,$rootScope,$window) {
-    return {
-        getLocation: function () {
-            var deferred = $q.defer();
-            if ($window.navigator.geolocation) {
-                $window.navigator.geolocation.getCurrentPosition(function (position) {
-                    $rootScope.$apply(function () {
-                        deferred.resolve(position);
-                    });
-                }, function (error) {
-                    switch (error){
-                        case 1:
-                            deferred.reject('Permission denied');
-                            break;
-                        case 2:
-                            deferred.reject('Position unavailable');
-                            break;
-                        case 3:
-                            deferred.reject('Request timeout');
-                            break;
-                    }
-                }, {enableHighAccuracy: true, timeout: 10000, maximumAge: 0});
-            }
-            else deferred.reject('Unsupported browser.');
-            return deferred.promise;
-        }
-    };
-}]);
-
 // Controllers
 app.controller("IndexController", ['$scope', '$http', 'geolocation', function($scope, $http, geolocation){
 
@@ -40,7 +9,6 @@ app.controller("IndexController", ['$scope', '$http', 'geolocation', function($s
     // initialize variable spot
      $scope.spot = {};
 
-    //TODO fix $http.get functionality
     var fetchSpot = function(){
         return $http.get('/spot').then(function(response){
             if (response.status !== 200) {
