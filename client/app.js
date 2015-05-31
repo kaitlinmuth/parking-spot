@@ -19,6 +19,7 @@ app.controller("IndexController", ['$scope', '$http', 'geolocation', function($s
     };
 
     $scope.saveSpot = function(){
+        console.log("Saving spot",$scope.spot);
         return $http.post('/spot', $scope.spot);
     };
 
@@ -80,7 +81,13 @@ app.controller("IndexController", ['$scope', '$http', 'geolocation', function($s
 
     //function addPin drops pin in map for parked location
     map.addPin = function() {
-        L.marker([$scope.spot.latitude, $scope.spot.longitude])
+        L.marker([$scope.spot.latitude, $scope.spot.longitude], {"draggable": true})
+            .on('dragend', function(){
+                var newLatLng = this.getLatLng();
+                $scope.spot.latitude = newLatLng.lat;
+                $scope.spot.longitude = newLatLng.lng;
+                $scope.saveSpot();
+            })
             .addTo(map);
     };
     // set map width to update dynamically with page size
