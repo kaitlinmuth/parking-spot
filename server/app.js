@@ -77,6 +77,7 @@ passport.use('local', new localStrategy({
           return done(null, false, {message: 'Incorrect username and password.'});
 
         // test a matching password
+        console.log("User found");
         user.comparePassword(password, function(err, isMatch) {
           if (err) throw err;
           if(isMatch)
