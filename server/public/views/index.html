@@ -5,25 +5,80 @@
     <title>Parking Spot Tracker</title>
 
     <script type="text/javascript" src="/vendor/angular/angular.min.js"></script>
+    <script type="text/javascript" src="vendor/angular-route/angular-route.min.js"></script>
     <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
-    <!--<script type="text/javascript" src="/vendor/mapbox-directions/mapbox.directions.js"></script>-->
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/mapbox-directions.js/v0.3.0/mapbox.directions.js'></script>
     <script type="text/javascript" src="/assets/scripts/app.min.js"></script>
     <script type="text/javascript" src="/assets/scripts/geolocate.min.js"></script>
-    <!--<link rel="stylesheet" href="/vendor/mapbox-directions/mapbox.directions.css" />-->
+
+    <link rel='stylesheet' href='https://api.tiles.mapbox.com/mapbox.js/plugins/mapbox-directions.js/v0.3.0/mapbox.directions.css' type='text/css' />
     <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
     <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
-    <div class="bodyContainer">
-        <div ng-controller="IndexController as index">
-            <div id="map" ng-style="mapStyle">
+    <div ng-controller="IndexController as index">
+        <div class="bodyContainer">
+                <div id="map" ng-style="mapStyle">
+                    </div>
+                <div id='inputs'></div>
+                <div id='errors'></div>
+                <div id='directions'>
+                    <div id='routes'></div>
+                    <div id='instructions'></div>
                 </div>
-            <div class="btn parkBtn" ng-click="park()">Park</div>
-            <div class="btn routeBtn">Route</div>
-        </div>
-        <a href="/register">Register</a>
-        <a href="/login">Login</a>
+                <div class="btn parkBtn" ng-click="park()">Park</div>
+                <div class="btn routeBtn" ng-click="getDirections()">Route</div>
 
+            <a href="/register">Register</a>
+            <a href="/login">Login</a>
+        </div>
+
+        <!--Modal Window prompts user to register or log in-->
+        <div id="overlay" ng-hide="auth == true">
+            <div id="overlayWindow">
+                <ul class="nav-tabs">
+                    <li> <a href ng-click="tab = 1">Log In</a></li>
+                    <li><a href ng-click="tab = 2">Register</a></li>
+                </ul>
+                <div class="tabForm">
+                <!-- Login Form -->
+                <form name="loginForm" ng-show="tab == 1">
+                    <div>
+                        <label for="username">Username:</label>
+                        <input type="text" name="username" id="username" ng-model="login.username"/>
+                    </div>
+                    <div>
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" id="password" ng-model="login.password"/>
+                    </div>
+                    <div class="submitBtn" ng-click="logIn()">Log In</div>
+                </form>
+                <!--Register Form-->
+                <form action="/users/register" method="post" ng-show="tab == 2">
+                    <div>
+                        <label for="username">Username:</label>
+                        <input type="text" name="username" id="username"/>
+                    </div>
+                    <div>
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" id="password"/>
+                    </div>
+                    <div>
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" id="password"/>
+                    </div>
+                    <div>
+                        <div class="submitBtn">Register</div>
+                    </div>
+                </form>
+                </div>
+                </div>
+            </div>
+        </div>
+        <pre>$location.path() = {{index.$location.path()}}</pre>
+        <pre>$route.current.templateUrl = {{index.$route.current.templateUrl}}</pre>
+        <pre>$route.current.params = {{index.$route.current.params}}</pre>
+        <pre>$routeParams = {{index.$routeParams}}</pre>
     </div>
 </body>
 </html>

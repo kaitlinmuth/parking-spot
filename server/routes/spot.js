@@ -25,10 +25,8 @@ app.put('/:id', function(req, res, next) {
 
 //POST /spot
 app.post('/', function(req, res, next){
-    console.log("Setting new spot to ",req.body);
     Spot.create(req.body, function(err, spot){
         if (err) return next(err);
-        console.log("Sending new spot ",spot);
         res.json(spot);
     });
 });

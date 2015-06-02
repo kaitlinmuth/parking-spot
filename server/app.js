@@ -13,8 +13,9 @@ var localStrategy = require('passport-local');
 var index = require('./routes/index');
 var spot = require('./routes/spot');
 var User = require('./models/user');
-var login = require('./routes/login');
-var register = require('./routes/register');
+//var login = require('./routes/login');
+//var register = require('./routes/register');
+var userRoute = require('./routes/users');
 
 var app = express();
 
@@ -46,7 +47,7 @@ app.use(session({
   key: 'user',
   resave: true,
   saveUninitialized: false,
-  cookie: {maxAge: 60000, secure: false}
+  cookie: {maxAge: 600000, secure: false}
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -88,11 +89,11 @@ passport.use('local', new localStrategy({
       });
     }));
 
-
 app.use('/', index);
 app.use('/spot', spot);
-app.use('/register', register);
-app.use('/login', login);
+app.use('/users', userRoute);
+//app.use('/register', register);
+//app.use('/login', login);
 
 var server = app.listen(3000, function(){
   var port = server.address().port;

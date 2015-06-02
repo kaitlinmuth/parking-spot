@@ -1,6 +1,9 @@
 body {
     font-family: sans-serif;
     font-size: 14px;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
 }
 
 .bodyContainer {
@@ -29,21 +32,32 @@ body {
 }
 
 #overlay {
-    visibility: hidden;
+    background-image: url('/assets/modal.png');
     position: absolute;
     left: 0px;
     top: 0px;
-    width:100%;
+    width: 100%;
     height:100%;
     text-align:center;
     z-index: 1000;
 }
 
-#overlay div {
-    width:300px;
-    margin: 100px auto;
+#overlayWindow {
     background-color: #fff;
     border:1px solid #000;
-    padding:15px;
     text-align:center;
+    width: 200px;
+    margin: 10px auto;
+}
+
+#overlayWindow li {
+    list-style-type: none;
+    display: inline;
+    text-align: center;
+}
+
+.submitBtn {
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid black;
 }
