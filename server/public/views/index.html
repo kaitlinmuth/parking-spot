@@ -5,31 +5,21 @@
     <title>Parking Spot Tracker</title>
 
     <script type="text/javascript" src="/vendor/angular/angular.min.js"></script>
-    <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.js'></script>
-    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/mapbox-directions.js/v0.3.0/mapbox.directions.js'></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
     <script type="text/javascript" src="/assets/scripts/app.min.js"></script>
     <script type="text/javascript" src="/assets/scripts/geolocate.min.js"></script>
 
-    <link rel='stylesheet' href='https://api.tiles.mapbox.com/mapbox.js/plugins/mapbox-directions.js/v0.3.0/mapbox.directions.css' type='text/css' />
-    <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.9/mapbox.css' rel='stylesheet' />
     <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
     <div ng-controller="IndexController as index">
         <div class="bodyContainer">
-                <div id="map" ng-style="mapStyle">
+                <div id="map-canvas" ng-style="mapStyle">
                     </div>
-                <div id='inputs'></div>
-                <div id='errors'></div>
-                <div id='directions'>
-                    <div id='routes'></div>
-                    <div id='instructions'></div>
-                </div>
+                <div id='directionsPanel'>
+                    </div>
                 <div class="btn parkBtn" ng-click="park()">Park</div>
                 <div class="btn routeBtn" ng-click="getDirections()">Route</div>
-
-            <a href="/register">Register</a>
-            <a href="/login">Login</a>
         </div>
 
         <!--Modal Window prompts user to register or log in-->

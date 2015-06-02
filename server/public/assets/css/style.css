@@ -13,9 +13,16 @@ body {
     text-align: center;
 }
 
-#map {
+#map-canvas {
     height: 400px;
     width: 600px;
+}
+
+#directionsPanel {
+    height: 100%;
+    float: right;
+    width: 390px;
+    overflow: auto;
 }
 
 .btn {

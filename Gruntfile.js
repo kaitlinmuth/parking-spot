@@ -9,10 +9,6 @@ module.exports = function(grunt) {
             app: {
                 src: 'client/app.js',
                 dest: 'server/public/assets/scripts/app.min.js'
-            },
-            geolocate: {
-                src: 'client/geolocate.js',
-                dest: 'server/public/assets/scripts/geolocate.min.js'
             }
         },
         copy: {
