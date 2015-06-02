@@ -110,6 +110,7 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
 
     //function addPin drops pin in map for parked location
     map.addPin = function() {
+
         L.marker([$scope.spot.latitude, $scope.spot.longitude], {"draggable": true})
             .on('dragend', function(){
                 var newLatLng = this.getLatLng();
@@ -123,7 +124,9 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
     //function getDirections gets directions back to the pinned location
     $scope.getDirections = function(){
         console.log("Getting directions!");
+        var destination;
         var directions = L.mapbox.directions();
+
         var directionsLayer = L.mapbox.directions.layer(directions)
             .addTo(map);
         var directionsErrorsControl = L.mapbox.directions.errorsControl('errors', directions)
@@ -133,6 +136,8 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
         var directionsInstructionsControl = L.mapbox.directions.instructionsControl('instructions', directions)
             .addTo(map);
         directions.setOrigin(getPosition());
+        directions.setDestination();
+        console.log('directions object', directions);
     };
 
     // set map width to update dynamically with page size

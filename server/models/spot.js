@@ -4,7 +4,7 @@
 var mongoose = require('mongoose');
 
 var Spot = new mongoose.Schema({
-    id: String,
+    _id: String,
     longitude: {type: Number, required: true},
     latitude: {type: Number, required: true},
     created: Date,

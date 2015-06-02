@@ -15,6 +15,15 @@ app.get('/', function(req, res, next){
     })
 });
 
+// GET spot by user
+app.get('/user', function(req, res, next){
+    var user = req.body;
+    Spot.find({_id: user}, 'longitude latitude created Notes Timer', function(err, data){
+        if (err) return next(err);
+        res.json(data);
+    })
+})
+
 /* PUT /spot/:id */
 app.put('/:id', function(req, res, next) {
     Spot.findByIdAndUpdate(req.params.id, req.body, function (err, spot) {
