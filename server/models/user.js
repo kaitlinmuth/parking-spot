@@ -8,8 +8,11 @@ var mongoose = require('mongoose'),
 
 var UserSchema = new Schema({
     username: {type: String, required: true, index: {unique: true}},
-    password: {type: String, required: true}
+    password: {type: String, required: true},
+    email: {type: String, required: true},
+    name: {type: String, required: true}
 });
+
 
 // before the password is saved, encrypt it using bcrypt
 UserSchema.pre('save', function(next){
@@ -37,6 +40,6 @@ UserSchema.methods.comparePassword = function(candidatePassword, next){
         if (err) return next(err);
         next(null, isMatch);
     })
-}
+};
 
 module.exports = mongoose.model('User', UserSchema);
