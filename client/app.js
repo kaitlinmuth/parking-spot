@@ -70,6 +70,7 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
     //TODO add user data to the spot
     var setPosition = function(position){
         console.log("set position", position);
+        $scope.spot._id = $scope.user.username;
         $scope.spot.created = new Date();
         $scope.spot.latitude = position.coords.latitude;
         $scope.spot.longitude = position.coords.longitude;
@@ -96,52 +97,85 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
         console.log('Update: ', message);
     };
 
-    // ===== Mapbox Set Up =====
-    // TODO move map functionality into separate module
-    // Initialize map
-    L.mapbox.accessToken='pk.eyJ1Ijoia2FpdGxpbm11dGgiLCJhIjoiNzZmNzg3OTE5N2ExMTgxNTcxYzdiM2RlMGQxN2Q2YzcifQ.YENWVyAaFMg0ngZEc1aP7A';
-    var mapLayer = L.mapbox.tileLayer('mapbox.streets');
-    var map = L.map('map')
-        .addLayer(mapLayer);
-    map.attributionControl.setPosition('bottomleft');
-
-    // initialize map spot
-    getPosition();
-
-    //function addPin drops pin in map for parked location
-    map.addPin = function() {
-
-        L.marker([$scope.spot.latitude, $scope.spot.longitude], {"draggable": true})
-            .on('dragend', function(){
-                var newLatLng = this.getLatLng();
-                $scope.spot.latitude = newLatLng.lat;
-                $scope.spot.longitude = newLatLng.lng;
-                $scope.saveSpot();
-            })
-            .addTo(map);
-    };
-
-    //function getDirections gets directions back to the pinned location
-    $scope.getDirections = function(){
-        console.log("Getting directions!");
-        var destination;
-        var directions = L.mapbox.directions();
-
-        var directionsLayer = L.mapbox.directions.layer(directions)
-            .addTo(map);
-        var directionsErrorsControl = L.mapbox.directions.errorsControl('errors', directions)
-            .addTo(map);
-        var directionsRoutesControl = L.mapbox.directions.routesControl('routes', directions)
-            .addTo(map);
-        var directionsInstructionsControl = L.mapbox.directions.instructionsControl('instructions', directions)
-            .addTo(map);
-        directions.setOrigin(getPosition());
-        directions.setDestination();
-        console.log('directions object', directions);
-    };
-
+    // ===== Google Maps Set-Up =====
     // set map width to update dynamically with page size
     $scope.mapStyle = {"width": "100%"};
+    var marker;
+    var mapOptions = {
+        zoom: 8,
+        center: getPosition(),
+        mapTypeId: google.maps.TypeId.ROADMAP
+    };
+
+    var map = new google.maps.Map(document.getElementById("map-canvas"),
+        mapOptions);
+
+    map.addPin = function(){
+        marker.setMap(null);
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude),
+            draggable: true,
+            title: "Parking Spot"
+        });
+        marker.setMap(map);
+    };
+
+    map.getDirections = function(){
+        var directions = new DirectionsService.route({
+            origin: LatLng($scope.spot.latitude, $scope.spot.longitude),
+            destination: marker.position,
+            travelMode: TravelMode.WALKING,
+        });
+    }
+
+    //// ===== Mapbox Set Up =====
+    //var spotMarker;
+    //// TODO move map functionality into separate module
+    //// Initialize map
+    //L.mapbox.accessToken='pk.eyJ1Ijoia2FpdGxpbm11dGgiLCJhIjoiNzZmNzg3OTE5N2ExMTgxNTcxYzdiM2RlMGQxN2Q2YzcifQ.YENWVyAaFMg0ngZEc1aP7A';
+    //var mapLayer = L.mapbox.tileLayer('mapbox.streets');
+    //var map = L.map('map')
+    //    .addLayer(mapLayer);
+    //map.attributionControl.setPosition('bottomleft');
+    //
+    //// initialize map spot
+    //getPosition();
+    //
+    ////function addPin drops pin in map for parked location, erasing any previous pin on the map
+    //map.addPin = function() {
+    //    if (map.hasLayer(spotMarker)) map.removeLayer(spotMarker);
+    //    spotMarker = L.marker([$scope.spot.latitude, $scope.spot.longitude], {"draggable": true})
+    //        .on('dragend', function(){
+    //            var newLatLng = this.getLatLng();
+    //            $scope.spot._id = $scope.user.username;
+    //            $scope.spot.latitude = newLatLng.lat;
+    //            $scope.spot.longitude = newLatLng.lng;
+    //            $scope.saveSpot();
+    //        })
+    //        .addTo(map);
+    //};
+    //
+    ////function getDirections gets directions back to the pinned location
+    //$scope.getDirections = function(){
+    //    console.log("Getting directions!");
+    //    var directions = L.mapbox.directions();
+    //    directions.setOrigin(getPosition());
+    //    directions.setDestination(spotMarker.getLatLng());
+    //    var directionsLayer = L.mapbox.directions.layer(directions)
+    //        .addTo(map);
+    //    var directionsInputControl = L.mapbox.directions.inputControl('inputs', directions)
+    //        .addTo(map);
+    //    var directionsErrorsControl = L.mapbox.directions.errorsControl('errors', directions)
+    //        .addTo(map);
+    //    var directionsRoutesControl = L.mapbox.directions.routesControl('routes', directions)
+    //        .addTo(map);
+    //    var directionsInstructionsControl = L.mapbox.directions.instructionsControl('instructions', directions)
+    //        .addTo(map);
+    //    console.log(directions);
+    //
+    //};
+
+
 
 
 

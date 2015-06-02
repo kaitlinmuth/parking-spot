@@ -34,8 +34,10 @@ app.put('/:id', function(req, res, next) {
 
 //POST /spot
 app.post('/', function(req, res, next){
+    console.log(req.body);
     Spot.create(req.body, function(err, spot){
         if (err) return next(err);
+        console.log("new spot is",spot)
         res.json(spot);
     });
 });
