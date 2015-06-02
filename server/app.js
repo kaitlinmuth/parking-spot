@@ -13,8 +13,6 @@ var localStrategy = require('passport-local');
 var index = require('./routes/index');
 var spot = require('./routes/spot');
 var User = require('./models/user');
-//var login = require('./routes/login');
-//var register = require('./routes/register');
 var userRoute = require('./routes/users');
 
 var app = express();
@@ -31,9 +29,6 @@ MongoDB.once('open', function(){
   console.log('mongodb connection open');
 });
 
-//// view engine setup
-//app.set('views', path.join(__dirname, 'views'));
-//app.set('view engine', 'ejs');
 
 app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -92,8 +87,6 @@ passport.use('local', new localStrategy({
 app.use('/', index);
 app.use('/spot', spot);
 app.use('/users', userRoute);
-//app.use('/register', register);
-//app.use('/login', login);
 
 var server = app.listen(3000, function(){
   var port = server.address().port;
