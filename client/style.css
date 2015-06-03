@@ -18,13 +18,6 @@ body {
     width: 600px;
 }
 
-#directionsPanel {
-    height: 100%;
-    float: right;
-    width: 390px;
-    overflow: auto;
-}
-
 .btn {
     display: inline-block;
     margin: 10px;
@@ -36,6 +29,12 @@ body {
 .parkBtn {
     color: forestgreen;
     border: 2px solid forestgreen;
+}
+
+.submitBtn {
+    padding: 10px;
+    margin: 10px;
+    border: 1px solid black;
 }
 
 #overlay {
@@ -61,44 +60,4 @@ body {
     list-style-type: none;
     display: inline;
     text-align: center;
-}
-
-.submitBtn {
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid black;
-}
-
-#inputs,
-#errors,
-#directions {
-    position: absolute;
-    width: 33.3333%;
-    max-width: 300px;
-    min-width: 200px;
-}
-
-#inputs {
-    z-index: 10;
-    top: 10px;
-    left: 10px;
-}
-
-#directions {
-    z-index: 99;
-    background: rgba(0,0,0,.8);
-    top: 0;
-    right: 0;
-    bottom: 0;
-    overflow: auto;
-}
-
-#errors {
-    z-index: 8;
-    opacity: 0;
-    padding: 10px;
-    border-radius: 0 0 3px 3px;
-    background: rgba(0,0,0,.25);
-    top: 90px;
-    left: 10px;
 }

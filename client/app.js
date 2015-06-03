@@ -4,7 +4,7 @@
 var app = angular.module('app', []);
 
 // Controllers
-app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', function($scope, $http, $sce, geolocation){
+app.controller("IndexController", ['$scope', '$http', function($scope, $http){
 
     // ===== Authorization Login =====
     $scope.auth = false;
@@ -126,6 +126,7 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
 
     //map.getDirections gets directions from Google Maps
     $scope.getDirections = function(){
+        var panel = document.getElementById('directionsPanel');
         directionsService.route({
             origin: new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude),
             destination: marker.position,
@@ -134,7 +135,8 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
             if (status == google.maps.DirectionsStatus.OK){
                 console.log(result);
                 directionsDisplay.setDirections(result);
-                directionsDisplay.setPanel(angular.element.find('directionsPanel'));
+                directionsDisplay.setPanel(panel);
+                console.log("directionsDisplay",directionsDisplay);
             }
         });
     };
