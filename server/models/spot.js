@@ -4,7 +4,6 @@
 var mongoose = require('mongoose');
 
 var Spot = new mongoose.Schema({
-    _id: String,
     longitude: {type: Number, required: true},
     latitude: {type: Number, required: true},
     created: Date,
@@ -12,4 +11,4 @@ var Spot = new mongoose.Schema({
     Timer: Date
 });
 
-module.exports = mongoose.model('spot', Spot);
+module.exports = mongoose.model('Spot', Spot);

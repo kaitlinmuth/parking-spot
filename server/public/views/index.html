@@ -14,11 +14,14 @@
 <body>
     <div ng-controller="IndexController as index">
         <div class="bodyContainer">
-                <div id="map-canvas" ng-style="mapStyle">
-                    </div>
+            <div class="map">
+                <div id="map-canvas" ng-style="mapStyle"></div>
+                </div>
+            <div class="controls">
                 <div class="btn parkBtn" ng-click="park()">Park</div>
                 <div class="btn routeBtn" ng-click="getDirections()">Route</div>
-            <div id='directionsPanel'></div>
+                <div id='directionsPanel'></div>
+            </div>
         </div>
 
         <!--Modal Window prompts user to register or log in-->
@@ -45,18 +48,22 @@
                 <form action="/users/register" method="post" ng-show="tab == 2">
                     <div>
                         <label for="username">Username:</label>
-                        <input type="text" name="username" id="username"/>
+                        <input type="text" name="username" id="username" ng-model="login.username"/>
                     </div>
                     <div>
                         <label for="password">Password:</label>
-                        <input type="password" name="password" id="password"/>
+                        <input type="password" name="password" id="password" ng-model="login.password"/>
                     </div>
                     <div>
-                        <label for="password">Password:</label>
-                        <input type="password" name="password" id="password"/>
+                        <label for="name">Name:</label>
+                        <input type="text" name="name" id="name" ng-model="login.name"/>
                     </div>
                     <div>
-                        <div class="submitBtn">Register</div>
+                        <label for="email">Email Address:</label>
+                        <input type="email" name="email" id="email" ng-model="login.email"/>
+                    </div>
+                    <div>
+                        <div class="submitBtn" ng-click="register()">Register</div>
                     </div>
                 </form>
                 </div>

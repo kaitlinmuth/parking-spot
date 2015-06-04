@@ -1,21 +1,27 @@
 body {
     font-family: sans-serif;
-    font-size: 14px;
     height: 100%;
-    margin: 0px;
     padding: 0px;
-}
-
-.bodyContainer {
-    width: 60%;
-    margin-left: 20%;
-    margin-right: 20%;
     text-align: center;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 #map-canvas {
     height: 400px;
     width: 600px;
+}
+
+.controls{
+    float: left;
+    width: 30%;
+    height: 100%;
+}
+
+.map{
+    float:right;
+    width: 65%;
+    height: 100%;
 }
 
 .btn {
@@ -53,7 +59,9 @@ body {
     border:1px solid #000;
     text-align:center;
     width: 200px;
-    margin: 10px auto;
+    padding: 10px auto;
+    margin: auto;
+    position: relative;
 }
 
 #overlayWindow li {

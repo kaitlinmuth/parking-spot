@@ -2,68 +2,61 @@
  * Created by kaitlinmuth on 5/26/15.
  */
 var express = require('express');
-var app = express.Router();
+var router = express.Router();
+var passport = require('passport');
+var path = require('path');
+var Users = require('../models/user');
+var Spots = require('../models/spot');
 
-var mongoose = require('mongoose');
-var Spot = require('../models/spot');
-
-// GET spot list
-app.get('/', function(req, res, next){
-    Spot.find(function(err, data){
-        if (err) return next(err);
-        res.json(data);
-    })
-});
-
-// GET spot by user
-app.get('/user', function(req, res, next){
-    var user = req.body;
-    Spot.find({_id: user}, 'longitude latitude created Notes Timer', function(err, data){
-        if (err) return next(err);
-        res.json(data);
-    })
-})
-
-/* PUT /spot/:id */
-app.put('/:id', function(req, res, next) {
-    Spot.findByIdAndUpdate(req.params.id, req.body, function (err, spot) {
-        if (err) return next(err);
-        res.json(spot);
+//POST /users/spots/add/
+router.post('/add', function(req,res,next) {
+    var spot = new Spots({
+        latitude: req.body.spot.latitude,
+        longitude: req.body.spot.longitude,
+        created: req.body.spot.created
+    });
+    Users.findById(req.user._id).exec(function (err, user) {
+        if (err) {
+            next(err);
+        }
+        try {
+            user.spots.push(spot);
+            user.save(function (err) {
+                if (err) return next(err);
+                else res.json(spot);
+            });
+        }catch(exception){
+            next(err);
+        }
     });
 });
 
-//POST /spot
-app.post('/', function(req, res, next){
-    console.log(req.body);
-    Spot.create(req.body, function(err, spot){
-        if (err) return next(err);
-        console.log("new spot is",spot)
-        res.json(spot);
+//PUT /users/spots/update
+router.put('/update', function(req, res, next) {
+    console.log("Got request to update spot", req.body);
+    Users.findById(req.user._id).exec(function (err, user) {
+        var oldSpot = user.spots.pop();
+        var newSpot = new Spots({
+            latitude: req.body.spot.latitude,
+            longitude: req.body.spot.longitude,
+            created: req.body.spot.created
+        });
+        console.log("Updated spot is", newSpot);
+        if (err) {
+            console.log("Find user failed:", err);
+            next(err);
+        }
+        try {
+            user.spots.push(newSpot);
+            user.save(function (err) {
+                if (err) return next(err);
+                else res.json(newSpot);
+            });
+        } catch (exception) {
+            console.log("Save spot failed: ", exception);
+            next(err);
+        }
     });
 });
 
-/* GET /spot/:id */
-app.get('/:id', function(req, res, next) {
-    Spot.findById(req.params.id, req.body, function (err, spot) {
-        if (err) return next(err);
-        res.json(spot);
-    });
-});
-
-/* PUT /spot/:id */
-app.put('/:id', function(req, res, next) {
-    Spot.findByIdAndUpdate(req.params.id, req.body, function (err, spot) {
-        if (err) return next(err);
-        res.json(spot);
-    });
-});
-
-/* DELETE /spot/:id */
-app.delete('/:id', function(req, res, next) {
-    Spot.findByIdAndRemove(req.params.id, req.body, function (err, assignment) {
-        if (err) return next(err);
-        res.json(assignment);
-    });
-});
-
-module.exports = app;
+module.exports = router;
