@@ -154,6 +154,7 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
         marker = new google.maps.Marker({
             position: new google.maps.LatLng(position.latitude, position.longitude),
             draggable: true,
+            animation: google.maps.Animation.DROP,
             title: "Parking Spot"
         });
         google.maps.event.addListener(marker, 'dragend', function(){
