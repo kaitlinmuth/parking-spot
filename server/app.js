@@ -85,7 +85,7 @@ passport.use('local', new localStrategy({
     }));
 
 app.use('/', index);
-app.use('/spot', spot);
+app.use('/spots', spot);
 app.use('/users', userRoute);
 
 var server = app.listen(3000, function(){
@@ -107,10 +107,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
+    next(err);
   });
 }
 
@@ -118,10 +115,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
+  next(err);
 });
 
 

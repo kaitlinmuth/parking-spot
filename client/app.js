@@ -4,19 +4,24 @@
 var app = angular.module('app', []);
 
 // Controllers
-app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', function($scope, $http, $sce, geolocation){
+app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $http, $q){
 
     // ===== Authorization Login =====
     $scope.auth = false;
     $scope.tab = 1;
 
-    $scope.logIn = function(){
+    $scope.logIn = function() {
         console.log("Clicked! sending request", $scope.login);
-        $http.post('/users/login', $scope.login).success(function() {
-                getUser();
+        $http.post('/users/login', $scope.login).success(function () {
+            getUser();
+        });
+    };
 
-            }
-        );
+    $scope.register = function(){
+        console.log("Clicked! sending request", $scope.login);
+        $http.post('/users/register', $scope.login).success(function(){
+            $scope.logIn();
+        })
     };
 
     // ===== Database Logic =====
@@ -26,7 +31,7 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
     var getUser = function(){
         $http.get('/users/username').success(function(data){
             console.log('user data is',data);
-            if (data != false){
+            if (data){
                 $scope.user = data;
                 $scope.auth = true;
             }
@@ -36,113 +41,135 @@ app.controller("IndexController", ['$scope', '$http', '$sce', 'geolocation', fun
 
     console.log("Current user is ",$scope.user);
 
-    var fetchSpot = function(){
-        return $http.get('/spot').then(function(response){
-            if (response.status !== 200) {
-                throw new Error('Failed to fetch Spot from API');
-            }
-           $scope.spot = response.data;
-            return response.data;
-        });
+    var saveSpot = function(){
+        var req = {'user._id': $scope.user._id,
+            'spot' : $scope.spot};
+        console.log("Sending request to save spot:", req);
+        return $http.post('/spots/add/', req);
     };
 
-    $scope.saveSpot = function(){
-        console.log("Saving spot",$scope.spot);
-        return $http.post('/spot', $scope.spot);
-    };
+    var updateSpot = function(){
+        var req = {'user._id': $scope.user._id, 'spot' : $scope.spot};
+        console.log("Sending request to update spot:", req);
+        return $http.put('/spots/update', req);
+    }
 
     // ===== Positioning Logic =====
 
     //park gets a position, sets Spot to position, drops a pin and saves the spot to the database
     $scope.park = function(){
-        getPosition()
-            .then(
-            function(){map.addPin()},
-            function(err){logError(err);},
-            function(msg){sendUpdate(msg);})
-            .then(
-            function(){$scope.saveSpot();},
-            function(err){logError(err);},
-            function(msg){sendUpdate(msg);});
+        var promise = promisePosition();
+        promise.then(
+            function(value){
+                console.log("Actioning promise");
+                addPin($scope.spot);
+                saveSpot();
+                var center = new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude);
+                map.setCenter(center);
+                map.setZoom(15);
+            },
+            function(reason) {
+                console.log("Failed: ", reason);
+            }
+        );
+    };
+
+    var promisePosition = function(){
+        return $q(function(resolve, reject){
+            setTimeout(function(){
+                if (getPosition() == true) {
+                    resolve('Position acquired')
+                } else {
+                    reject('Could not resolve position')
+                }
+            }, 10000);
+        });
     };
 
     // setPosition saves a given position to $scope.spot
-    //TODO add user data to the spot
     var setPosition = function(position){
         console.log("set position", position);
         $scope.spot.created = new Date();
         $scope.spot.latitude = position.coords.latitude;
         $scope.spot.longitude = position.coords.longitude;
         console.log("spot set to", $scope.spot);
-        map.setView([$scope.spot.latitude, $scope.spot.longitude], 15);
+        if (map == null) createMap();
         return true;
     };
 
     var getPosition = function(){
-        var promise = geolocation.getLocation();
-            promise.then(
-                function(value){setPosition(value);},
-                function(err){logError(err)},
-                function(update){sendUpdate(update);});
-        return promise;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(setPosition);
+            return true;
+        } else {
+            throw new Error("In-browser geolocation not supported");
+        }
     };
 
-    var logError = function(error){
-        console.log('Failed: ',error);
-        next(error);
-    };
-
-    var sendUpdate = function(message){
-        console.log('Update: ', message);
-    };
-
-    // ===== Mapbox Set Up =====
-    // TODO move map functionality into separate module
-    // Initialize map
-    L.mapbox.accessToken='pk.eyJ1Ijoia2FpdGxpbm11dGgiLCJhIjoiNzZmNzg3OTE5N2ExMTgxNTcxYzdiM2RlMGQxN2Q2YzcifQ.YENWVyAaFMg0ngZEc1aP7A';
-    var mapLayer = L.mapbox.tileLayer('mapbox.streets');
-    var map = L.map('map')
-        .addLayer(mapLayer);
-    map.attributionControl.setPosition('bottomleft');
-
-    // initialize map spot
-    getPosition();
-
-    //function addPin drops pin in map for parked location
-    map.addPin = function() {
-
-        L.marker([$scope.spot.latitude, $scope.spot.longitude], {"draggable": true})
-            .on('dragend', function(){
-                var newLatLng = this.getLatLng();
-                $scope.spot.latitude = newLatLng.lat;
-                $scope.spot.longitude = newLatLng.lng;
-                $scope.saveSpot();
-            })
-            .addTo(map);
-    };
-
-    //function getDirections gets directions back to the pinned location
-    $scope.getDirections = function(){
-        console.log("Getting directions!");
-        var destination;
-        var directions = L.mapbox.directions();
-
-        var directionsLayer = L.mapbox.directions.layer(directions)
-            .addTo(map);
-        var directionsErrorsControl = L.mapbox.directions.errorsControl('errors', directions)
-            .addTo(map);
-        var directionsRoutesControl = L.mapbox.directions.routesControl('routes', directions)
-            .addTo(map);
-        var directionsInstructionsControl = L.mapbox.directions.instructionsControl('instructions', directions)
-            .addTo(map);
-        directions.setOrigin(getPosition());
-        directions.setDestination();
-        console.log('directions object', directions);
-    };
-
+    // ===== Google Maps Set-Up =====
     // set map width to update dynamically with page size
-    $scope.mapStyle = {"width": "100%"};
+    $scope.mapStyle = {"width": "100%", "height": "100%"};
 
+    var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    var map;
+    var marker = new google.maps.Marker;
+    google.maps.event.addDomListener(window, 'load', getPosition);
 
+    //createMap initializes a new google map centered at $scope.spot
+    function createMap() {
+        var center = new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude);
+        map = new google.maps.Map(document.getElementById("map-canvas"),
+        {
+            zoom: 15,
+            center: center,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        if ($scope.user.spots[$scope.user.spots.length - 1]) {
+            console.log("Found most recent spot", $scope.user.spots[$scope.user.spots.length - 1]);
+            addPin({
+                latitude: $scope.user.spots[$scope.user.spots.length - 1].latitude,
+                longitude: $scope.user.spots[$scope.user.spots.length - 1].longitude
+            });
+        }
+    }
+
+    // map.addPin adds a new marker to the map. if there is an existing marker, it will be overwritten
+    var addPin = function(position){
+        marker.setMap(null);
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng(position.latitude, position.longitude),
+            draggable: true,
+            title: "Parking Spot"
+        });
+        google.maps.event.addListener(marker, 'dragend', function(){
+            directionsDisplay.setMap(null);
+            var newSpot = marker.getPosition();
+            console.log("new spot is", newSpot);
+            $scope.spot.latitude = newSpot.A;
+            $scope.spot.longitude = newSpot.F;
+            $scope.spot.created = new Date();
+            updateSpot();
+            getPosition();
+        });
+        marker.setMap(map);
+        console.log("Pin dropped",marker);
+    };
+
+    //map.getDirections gets directions from Google Maps
+    $scope.getDirections = function(){
+        var panel = document.getElementById('directionsPanel');
+        directionsService.route({
+            origin: new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude),
+            destination: marker.position,
+            travelMode: google.maps.TravelMode.WALKING,
+        }, function(result, status){
+            if (status == google.maps.DirectionsStatus.OK){
+                directionsDisplay.setDirections(result);
+                directionsDisplay.setMap(map);
+                directionsDisplay.setPanel(panel);
+            }
+        });
+    };
 
 }]);
