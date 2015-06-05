@@ -18,7 +18,7 @@ var userRoute = require('./routes/users');
 var app = express();
 
 //connect to the database
-var mongoURI = 'mongodb://<kaitlin>:<kaitlin>@ds041992.mongolab.com:41992/parking_spots';
+var mongoURI = 'mongodb://kaitlin:kaitlin@ds041992.mongolab.com:41992/parking_spots';
 var MongoDB = mongoose.connect(mongoURI).connection;
 
 MongoDB.on('error', function(err){

@@ -34,6 +34,12 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
             if (data){
                 $scope.user = data;
                 $scope.auth = true;
+                if ($scope.user.spots[$scope.user.spots.length - 1]) {
+                    addPin({
+                        latitude: $scope.user.spots[$scope.user.spots.length - 1].latitude,
+                        longitude: $scope.user.spots[$scope.user.spots.length - 1].longitude
+                    });
+                }
             }
 
         })
@@ -67,6 +73,19 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
                 var center = new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude);
                 map.setCenter(center);
                 map.setZoom(15);
+            },
+            function(reason) {
+                console.log("Failed: ", reason);
+            }
+        );
+    };
+
+    $scope.route = function(){
+        var promise = promisePosition();
+        promise.then(
+            function(value){
+                console.log("Actioning promise");
+                getDirections();
             },
             function(reason) {
                 console.log("Failed: ", reason);
@@ -108,7 +127,7 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
 
     // ===== Google Maps Set-Up =====
     // set map width to update dynamically with page size
-    $scope.mapStyle = {"width": "100%", "height": "100%"};
+    $scope.mapStyle = {"width": "100%"};
 
     var directionsService = new google.maps.DirectionsService();
     var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -121,21 +140,16 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
         var center = new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude);
         map = new google.maps.Map(document.getElementById("map-canvas"),
         {
-            zoom: 15,
+            zoom: 14,
             center: center,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         });
-        if ($scope.user.spots[$scope.user.spots.length - 1]) {
-            console.log("Found most recent spot", $scope.user.spots[$scope.user.spots.length - 1]);
-            addPin({
-                latitude: $scope.user.spots[$scope.user.spots.length - 1].latitude,
-                longitude: $scope.user.spots[$scope.user.spots.length - 1].longitude
-            });
-        }
     }
 
     // map.addPin adds a new marker to the map. if there is an existing marker, it will be overwritten
     var addPin = function(position){
+        directionsDisplay.setMap(null);
+        directionsDisplay.setPanel(null);
         marker.setMap(null);
         marker = new google.maps.Marker({
             position: new google.maps.LatLng(position.latitude, position.longitude),
@@ -144,6 +158,7 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
         });
         google.maps.event.addListener(marker, 'dragend', function(){
             directionsDisplay.setMap(null);
+            directionsDisplay.setPanel(null);
             var newSpot = marker.getPosition();
             console.log("new spot is", newSpot);
             $scope.spot.latitude = newSpot.A;
@@ -157,12 +172,12 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
     };
 
     //map.getDirections gets directions from Google Maps
-    $scope.getDirections = function(){
+    var getDirections = function(){
         var panel = document.getElementById('directionsPanel');
         directionsService.route({
             origin: new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude),
             destination: marker.position,
-            travelMode: google.maps.TravelMode.WALKING,
+            travelMode: google.maps.TravelMode.WALKING
         }, function(result, status){
             if (status == google.maps.DirectionsStatus.OK){
                 directionsDisplay.setDirections(result);
