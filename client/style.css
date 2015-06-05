@@ -1,10 +1,19 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Alegreya Sans SC', sans-serif;
+    color: #ff9036;
     height: 100%;
-    padding: 0px;
     text-align: center;
+}
+
+.bodyContainer {
     margin-left: 5%;
     margin-right: 5%;
+}
+
+.header{
+    font-size: 5em;
+    margin: 0px auto;
+    padding: 0px auto;
 }
 
 #map-canvas {
@@ -29,12 +38,9 @@ body {
     margin: 10px;
     padding: 10px;
     text-align: center;
-    font-size: 36px;
-}
-
-.parkBtn {
-    color: forestgreen;
-    border: 2px solid forestgreen;
+    font-size: 2em;
+    background-color: #ff9036;
+    color: white;
 }
 
 .submitBtn {
@@ -56,16 +62,23 @@ body {
 
 #overlayWindow {
     background-color: #fff;
-    border:1px solid #000;
     text-align:center;
-    width: 200px;
-    padding: 10px auto;
+    width: 25%;
+    font-size: 1.5em;
     margin: auto;
+    padding: 0.25em;
     position: relative;
+    top: 35%;
 }
 
-#overlayWindow li {
-    list-style-type: none;
-    display: inline;
+.loginHeading{
+    font-size: 2em;
+}
+
+.loginLinks span, a{
     text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    color: black;
+    font-size: 1em;
 }

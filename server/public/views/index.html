@@ -8,10 +8,11 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
     <script type="text/javascript" src="/assets/scripts/app.min.js"></script>
     <script type="text/javascript" src="/assets/scripts/geolocate.min.js"></script>
-
+    <link href='http://fonts.googleapis.com/css?family=Alegreya+Sans+SC:400,500,700,900' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
 <body>
+<div class="header">Save Your Spot</div>
     <div ng-controller="IndexController as index">
         <div class="bodyContainer">
             <div class="map">
@@ -27,46 +28,49 @@
         <!--Modal Window prompts user to register or log in-->
         <div id="overlay" ng-hide="auth == true">
             <div id="overlayWindow">
-                <ul class="nav-tabs">
-                    <li> <a href ng-click="tab = 1">Log In</a></li>
-                    <li><a href ng-click="tab = 2">Register</a></li>
-                </ul>
-                <div class="tabForm">
-                <!-- Login Form -->
-                <form name="loginForm" ng-show="tab == 1">
-                    <div>
-                        <label for="username">Username:</label>
-                        <input type="text" name="username" id="username" ng-model="login.username"/>
-                    </div>
-                    <div>
-                        <label for="password">Password:</label>
-                        <input type="password" name="password" id="password" ng-model="login.password"/>
-                    </div>
-                    <div class="submitBtn" ng-click="logIn()">Log In</div>
-                </form>
-                <!--Register Form-->
-                <form action="/users/register" method="post" ng-show="tab == 2">
-                    <div>
-                        <label for="username">Username:</label>
-                        <input type="text" name="username" id="username" ng-model="login.username"/>
-                    </div>
-                    <div>
-                        <label for="password">Password:</label>
-                        <input type="password" name="password" id="password" ng-model="login.password"/>
-                    </div>
-                    <div>
-                        <label for="name">Name:</label>
-                        <input type="text" name="name" id="name" ng-model="login.name"/>
-                    </div>
-                    <div>
-                        <label for="email">Email Address:</label>
-                        <input type="email" name="email" id="email" ng-model="login.email"/>
-                    </div>
-                    <div>
-                        <div class="submitBtn" ng-click="register()">Register</div>
-                    </div>
-                </form>
+                <div class="loginHeading">
+                    <span ng-show="tab == 1">Please log in</span>
+                    <span ng-show="tab == 2">Register</span>
                 </div>
+                <div class="tabForm">
+                    <!-- Login Form -->
+                    <form name="loginForm" ng-show="tab == 1">
+                        <div>
+                            <label for="username">Username:</label>
+                            <input type="text" name="username" id="username" ng-model="login.username"/>
+                        </div>
+                        <div>
+                            <label for="password">Password:</label>
+                            <input type="password" name="password" id="password" ng-model="login.password"/>
+                        </div>
+                        <div class="submitBtn" ng-click="logIn()">Log In</div>
+                    </form>
+                    <!--Register Form-->
+                    <form action="/users/register" method="post" ng-show="tab == 2">
+                        <div>
+                            <label for="username">Username:</label>
+                            <input type="text" name="username" id="username" ng-model="login.username"/>
+                        </div>
+                        <div>
+                            <label for="password">Password:</label>
+                            <input type="password" name="password" id="password" ng-model="login.password"/>
+                        </div>
+                        <div>
+                            <label for="name">Name:</label>
+                            <input type="text" name="name" id="name" ng-model="login.name"/>
+                        </div>
+                        <div>
+                            <label for="email">Email Address:</label>
+                            <input type="email" name="email" id="email" ng-model="login.email"/>
+                        </div>
+                        <div>
+                            <div class="submitBtn" ng-click="register()">Register</div>
+                        </div>
+                    </form>
+                </div>
+                <div class="loginLinks">
+                    <span ng-show="tab == 2"><a href ng-click="tab = 1">Log In</a></span>
+                    <span ng-hide="tab == 2"><a href ng-click="tab = 2">Register</a></span>
                 </div>
             </div>
         </div>
