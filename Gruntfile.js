@@ -12,13 +12,21 @@ module.exports = function(grunt) {
             }
         },
         copy: {
-            angular: {
+            node_modules: {
                 expand: true,
                 cwd: "node_modules/",
                 src: [
                     "angular/angular.min.js",
                     "angular/angular.min.js.map",
-                    "angular/angular-csp.css"
+                    "angular/angular-csp.css",
+                    "font-awesome/fonts/FontAwesome.otf",
+                    "font-awesome/fonts/fontawesome-webfont.eot",
+                    "font-awesome/fonts/fontawesome-webfont.svg",
+                    "font-awesome/fonts/fontawesome-webfont.ttf",
+                    "font-awesome/fonts/fontawesome-webfont.woff",
+                    "font-awesome/fonts/fontawesome-webfont.woff2",
+                    "font-awesome/css/font-awesome.min.css",
+                    "font-awesome/css/font-awesome.css.map"
                 ],
                 dest: "server/public/vendor/"
             },
@@ -29,15 +37,6 @@ module.exports = function(grunt) {
                     "style.css"
                 ],
                 dest: "server/public/assets/css/"
-            },
-            views: {
-                expand: true,
-                cwd: "client/views/",
-                src: [
-                    "login.html",
-                    "register.html"
-                    ],
-                dest:"server/public/views/"
             }
         }
     });
