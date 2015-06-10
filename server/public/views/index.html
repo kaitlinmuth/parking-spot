@@ -22,8 +22,11 @@
         </div>
 
         <!--Modal Window prompts user to register or log in-->
-        <div id="overlay" ng-hide="auth == true">
-            <div id="overlayWindow">
+        <div id="loadingAnim" ng-show="loading == true"><i class="fa fa-4x fa-compass"></i></div>
+        <div class="overlay" ng-show="loading == true"></div>
+        <div class="overlay" ng-hide="auth == true"></div>
+        <div class="overlayWindow" ng-hide="auth == true">
+            <div class="authContent" ng-hide="auth == true">
                 <div class="loginHeading">
                     <span ng-show="tab == 1">Please log in</span>
                     <span ng-show="tab == 2">Register</span>
@@ -39,7 +42,7 @@
                             <label for="password">Password:</label>
                             <input type="password" name="password" id="password" ng-model="login.password"/>
                         </div>
-                        <div class="submitBtn" ng-click="logIn()">Log In</div>
+                        <div class="submitBtn btn" ng-click="logIn()">Log In</div>
                     </form>
                     <!--Register Form-->
                     <form action="/users/register" method="post" ng-show="tab == 2">
@@ -60,7 +63,7 @@
                             <input type="email" name="email" id="email" ng-model="login.email"/>
                         </div>
                         <div>
-                            <div class="submitBtn" ng-click="register()">Register</div>
+                            <div class="submitBtn btn" ng-click="register()">Register</div>
                         </div>
                     </form>
                 </div>

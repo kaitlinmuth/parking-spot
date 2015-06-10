@@ -27,6 +27,7 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
     // ===== Database Logic =====
     // initialize variable spot
     $scope.spot = {};
+    $scope.loading = false;
 
     var getUser = function(){
         $http.get('/users/username').success(function(data){
@@ -64,6 +65,7 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
 
     //park gets a position, sets Spot to position, drops a pin and saves the spot to the database
     $scope.park = function(){
+        $scope.loading = true;
         var promise = promisePosition();
         promise.then(
             function(value){
@@ -73,22 +75,27 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
                 var center = new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude);
                 map.setCenter(center);
                 map.setZoom(15);
+                $scope.loading = false;
             },
             function(reason) {
                 console.log("Failed: ", reason);
+                $scope.loading = false;
             }
         );
     };
 
     $scope.route = function(){
+        $scope.loading = true;
         var promise = promisePosition();
         promise.then(
             function(value){
                 console.log("Actioning promise");
                 getDirections();
+                $scope.loading = false;
             },
             function(reason) {
                 console.log("Failed: ", reason);
+                $scope.loading = false;
             }
         );
     };
