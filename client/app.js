@@ -11,14 +11,12 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
     $scope.tab = 1;
 
     $scope.logIn = function() {
-        console.log("Clicked! sending request", $scope.login);
         $http.post('/users/login', $scope.login).success(function () {
             getUser();
         });
     };
 
     $scope.register = function(){
-        console.log("Clicked! sending request", $scope.login);
         $http.post('/users/register', $scope.login).success(function(){
             $scope.logIn();
         })
@@ -31,7 +29,6 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
 
     var getUser = function(){
         $http.get('/users/username').success(function(data){
-            console.log('user data is',data);
             if (data){
                 $scope.user = data;
                 $scope.auth = true;
@@ -46,18 +43,14 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
         })
     };
 
-    console.log("Current user is ",$scope.user);
-
     var saveSpot = function(){
         var req = {'user._id': $scope.user._id,
             'spot' : $scope.spot};
-        console.log("Sending request to save spot:", req);
         return $http.post('/spots/add/', req);
     };
 
     var updateSpot = function(){
         var req = {'user._id': $scope.user._id, 'spot' : $scope.spot};
-        console.log("Sending request to update spot:", req);
         return $http.put('/spots/update', req);
     }
 
@@ -69,7 +62,6 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
         var promise = promisePosition();
         promise.then(
             function(value){
-                console.log("Actioning promise");
                 addPin($scope.spot);
                 saveSpot();
                 var center = new google.maps.LatLng($scope.spot.latitude, $scope.spot.longitude);
@@ -89,7 +81,6 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
         var promise = promisePosition();
         promise.then(
             function(value){
-                console.log("Actioning promise");
                 getDirections();
                 $scope.loading = false;
             },
@@ -108,17 +99,15 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
                 } else {
                     reject('Could not resolve position')
                 }
-            }, 10000);
+            }, 1000);
         });
     };
 
     // setPosition saves a given position to $scope.spot
     var setPosition = function(position){
-        console.log("set position", position);
         $scope.spot.created = new Date();
         $scope.spot.latitude = position.coords.latitude;
         $scope.spot.longitude = position.coords.longitude;
-        console.log("spot set to", $scope.spot);
         if (map == null) createMap();
         return true;
     };
@@ -168,7 +157,6 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
             directionsDisplay.setMap(null);
             directionsDisplay.setPanel(null);
             var newSpot = marker.getPosition();
-            console.log("new spot is", newSpot);
             $scope.spot.latitude = newSpot.A;
             $scope.spot.longitude = newSpot.F;
             $scope.spot.created = new Date();
@@ -176,7 +164,6 @@ app.controller("IndexController", ['$scope', '$http', '$q', function($scope, $ht
             getPosition();
         });
         marker.setMap(map);
-        console.log("Pin dropped",marker);
     };
 
     //map.getDirections gets directions from Google Maps
